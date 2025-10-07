@@ -26,6 +26,11 @@ from orchestrator import BlogGenerationOrchestrator
 from models import GenerationSpec
 from utils.validator import validate_generation_spec
 
+# Ensure data directories exist
+config.logs_dir.mkdir(parents=True, exist_ok=True)
+config.vector_db_dir.mkdir(parents=True, exist_ok=True)
+config.cache_dir.mkdir(parents=True, exist_ok=True)
+
 # Setup logging
 logging.basicConfig(
     level=getattr(logging, config.log_level),
