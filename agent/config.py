@@ -25,7 +25,7 @@ class AgentConfig(BaseSettings):
     logs_dir: Path = Field(default_factory=lambda: Path(__file__).parent.parent / ".agent_data" / "logs")
 
     # Ollama settings
-    ollama_model: str = "gpt-oss:20b"
+    ollama_model: str = "qwen3-coder"
     ollama_base_url: str = "http://localhost:11434"
     ollama_timeout: int = 300  # seconds
 
@@ -41,9 +41,9 @@ class AgentConfig(BaseSettings):
 
     # Generation settings
     min_word_count: int = 800
-    max_word_count: int = 2000
+    max_word_count: int = 5000  # Increased for longer blog post generation
     temperature: float = 0.7
-    max_tokens: int = 4000
+    max_tokens: int = 8000  # Increased for longer blog post generation
 
     # Qdrant settings (if using Qdrant)
     qdrant_url: str = "http://localhost:6333"

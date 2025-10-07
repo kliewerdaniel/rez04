@@ -79,19 +79,24 @@ async def retrieve_relevant_context(
     query: str,
     top_k: int = None,
     expand_queries: bool = True,
-    filters: Optional[Dict[str, Any]] = None
+    filters: Optional[Dict[str, Any]] = None,
+    search_all_ingested: bool = True
 ) -> List[Document]:
     """
-    Retrieve relevant context from the knowledge base.
+    Retrieve relevant context from the entire ingested knowledge base.
+
+    Searches across all ingested content including blog posts and RSS articles
+    to provide comprehensive context for blog post generation.
 
     Args:
         query: Search query
         top_k: Number of results to return
         expand_queries: Whether to expand query with multiple formulations
         filters: Optional metadata filters
+        search_all_ingested: Always search entire database (kept for backward compatibility)
 
     Returns:
-        List of relevant documents
+        List of relevant documents from all ingested sources
     """
     if top_k is None:
         top_k = config.top_k_retrieval

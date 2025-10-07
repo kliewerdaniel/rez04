@@ -29,7 +29,10 @@ class RetrieverAgent:
 
     async def search_and_synthesize(self, topic: str, spec: GenerationSpec, top_k: int = 5) -> Dict[str, Any]:
         """
-        Search the knowledge base and synthesize relevant context.
+        Search the entire ingested knowledge base and synthesize relevant context.
+
+        Retrieves from all sources: blog posts, RSS articles, and any other ingested content
+        to provide comprehensive context for blog post generation.
 
         Args:
             topic: The search topic
@@ -39,10 +42,10 @@ class RetrieverAgent:
         Returns:
             Dictionary with summary and excerpts
         """
-        logger.info(f"Retriever agent searching for: {topic}")
+        logger.info(f"Retriever agent searching entire knowledge base for: {topic}")
 
         try:
-            # Retrieve relevant documents
+            # Retrieve relevant documents from ALL ingested sources
             context_docs = await retrieve_relevant_context(
                 topic,
                 top_k=top_k,
@@ -50,11 +53,21 @@ class RetrieverAgent:
             )
 
             if not context_docs:
+                logger.info("No relevant context found in entire knowledge base")
                 return {
                     "summary": f"No relevant context found for '{topic}'",
                     "excerpts": [],
                     "source_count": 0
                 }
+
+            # Log sources found for transparency
+            sources = set()
+            for doc in context_docs:
+                source_type = doc.metadata.get("source_type", "blog_post")
+                title = doc.metadata.get("title", "Unknown")
+                sources.add(f"{source_type}: {title}")
+
+            logger.info(f"Retrieved context from {len(context_docs)} documents spanning {len(sources)} sources: {', '.join(list(sources)[:5])}{'...' if len(sources) > 5 else ''}")
 
             # Assemble context window
             context_window = await assemble_context_window(context_docs, max_tokens=2000)
